@@ -1,5 +1,8 @@
 import pyttsx3
 import datetime
+import speech_recognition as sr
+import wikipedia
+import os
 
 speech = pyttsx3.init('sapi5')
 voices = speech.getProperty('voices')
@@ -11,16 +14,49 @@ def speak(text):
 
 def greetings():
     hour = int(datetime.datetime.now().hour)
-    if hour >= 8 and hour < 4:
+    if hour >= 20 or hour < 4:
         speak("Good Night!")
     elif hour >=4 and hour < 12:
         speak("Good Morning!")
-    elif hour >=12 and hour < 5:
+    elif hour >=12 and hour <16:
         speak("Good Afternoon!")
     else:
         speak("Good Evening!")
 
     speak("How may i help you?")
 
+def recieveCommand():
+    voiceRecog = sr.Recognizer()
+    with sr.Microphone() as source:
+        speak("Listening...")
+        print("Listening...")
+        voiceRecog.pause_threshold = 1
+        voiceRecog.adjust_for_ambient_noise(source)
+        try:
+            audio = voiceRecog.listen(source)
+            query = voiceRecog.recognize_google(audio, language='en-in')
+            print(query)
+            return query
+        except Exception as e:
+            speak("Say that again please.")
+            return "None"
+
 if __name__=="__main__":
     greetings()
+    while True:
+        query = recieveCommand().lower()
+        if 'wikipedia' in query:
+            speak("Searching Wikipedia...")
+            query = query.replace("wikipedia", "")
+            result = wikipedia.summary(query, sentences=3)
+            speak("According to wikipedia")
+            speak(result)
+        elif 'open vs code' in query or 'open code' in query or 'open visual studio' in query:
+            codePath = "Replace with vs code exe file path"
+            os.startfile(codePath)
+        elif 'time' in query:
+            time = datetime.datetime.now().strftime("%H:%M")
+            print(f"Time is {time}")
+            speak(f"Time is {time}")
+        else:
+            speak("Insufficient clearence level")
