@@ -52,13 +52,15 @@ if __name__=="__main__":
             time = datetime.datetime.now().strftime("%H:%M")
             print(f"Time is {time}")
             speak(f"Time is {time}")
-        elif 'open youtube' in query:
-            webbrowser.open("youtube.com")
-        elif 'open github' in query:
-            webbrowser.open("github.com")
-        elif 'open google' in query:
-            webbrowser.open("google.com")
-        elif 'exit' in query or 'quit' in query:
+        elif 'open' in query:
+            website = query.replace('open', '').strip().replace(' ', '')
+            if '.' not in website:
+                website+='.com'
+            webbrowser.open(f"https://{website}")
+        elif 'search' in query:
+            search = query.replace('search', '').strip()
+            webbrowser.open(f"https://www.google.com/search?q={search}")
+        elif 'exit' in query:
             speak("Goodbye")
             break
         else:
