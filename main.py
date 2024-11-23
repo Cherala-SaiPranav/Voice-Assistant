@@ -1,7 +1,7 @@
 import pyttsx3
 import datetime
 import speech_recognition as sr
-import wikipedia
+import webbrowser
 import os
 
 speech = pyttsx3.init('sapi5')
@@ -45,18 +45,21 @@ if __name__=="__main__":
     greetings()
     while True:
         query = recieveCommand().lower()
-        if 'wikipedia' in query:
-            speak("Searching Wikipedia...")
-            query = query.replace("wikipedia", "")
-            result = wikipedia.summary(query, sentences=3)
-            speak("According to wikipedia")
-            speak(result)
-        elif 'open vs code' in query or 'open code' in query or 'open visual studio' in query:
+        if 'open vs code' in query or 'open code' in query or 'open visual studio' in query:
             codePath = "Replace with vs code exe file path"
             os.startfile(codePath)
         elif 'time' in query:
             time = datetime.datetime.now().strftime("%H:%M")
             print(f"Time is {time}")
             speak(f"Time is {time}")
+        elif 'open youtube' in query:
+            webbrowser.open("youtube.com")
+        elif 'open github' in query:
+            webbrowser.open("github.com")
+        elif 'open google' in query:
+            webbrowser.open("google.com")
+        elif 'exit' in query or 'quit' in query:
+            speak("Goodbye")
+            break
         else:
             speak("Insufficient clearence level")
