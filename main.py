@@ -41,27 +41,46 @@ def recieveCommand():
             speak("Say that again please.")
             return "None"
 
+def search_exe_files(search_name, search_path="C:\\"):
+    for root, dirs, files in os.walk(search_path):
+        for file in files:
+            if file.lower() == f"{search_name}.exe".lower():
+                return os.path.join(root, file)
+    return None
+
+def processQuery(query):
+    if 'run' in query:
+        file = query.replace('open', '').strip().lower()
+        appPath = search_exe_files(file)
+        if appPath:
+            os.startfile(appPath)
+        else:
+            speak("App not found.")
+    elif 'time' in query:
+        time = datetime.datetime.now().strftime("%H:%M")
+        print(f"Time is {time}")
+        speak(f"Time is {time}")
+    elif 'open' in query:
+        website = query.replace('open', '').strip().replace(' ', '')
+        if '.' not in website:
+            website+='.com'
+        webbrowser.open(f"https://{website}")
+    elif 'search' in query:
+        search = query.replace('search', '').strip()
+        if search:
+            webbrowser.open(f"https://www.google.com/search?q={search}")
+        else:
+            speak("Please specify.")
+    elif 'exit' in query:
+        speak("Goodbye")
+        return False
+    else:
+        speak("Insufficient clearence level")
+    return True
+
 if __name__=="__main__":
     greetings()
     while True:
         query = recieveCommand().lower()
-        if 'open vs code' in query or 'open code' in query or 'open visual studio' in query:
-            codePath = "Replace with vs code exe file path"
-            os.startfile(codePath)
-        elif 'time' in query:
-            time = datetime.datetime.now().strftime("%H:%M")
-            print(f"Time is {time}")
-            speak(f"Time is {time}")
-        elif 'open' in query:
-            website = query.replace('open', '').strip().replace(' ', '')
-            if '.' not in website:
-                website+='.com'
-            webbrowser.open(f"https://{website}")
-        elif 'search' in query:
-            search = query.replace('search', '').strip()
-            webbrowser.open(f"https://www.google.com/search?q={search}")
-        elif 'exit' in query:
-            speak("Goodbye")
+        if not processQuery(query):
             break
-        else:
-            speak("Insufficient clearence level")
